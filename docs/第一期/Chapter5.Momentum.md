@@ -34,9 +34,11 @@ x_{t+1} = x_t - \alpha \nabla f(x_t) + \beta(x_t - x_{t-1})
 $$
 
 令 $v_t = x_t - x_{t-1}$，化简可得：
+
 $$
 v_{t+1} = \beta v_{t} - \alpha \nabla f(x_t) \\
 $$
+
 其中 $v_t$ 可以表示当前速度，$\beta$ 是动量参数，是一个小于 1的正数。
 
 &emsp;&emsp;如果我们把当前迭代想象成一个有质量的小球，那么从上述公式可以指导，我们的梯度下降更新应该与之前的步长成正比。
@@ -54,6 +56,7 @@ $$
 $$
 
 于是有动量更新规则为：
+
 $$
 \begin{aligned}
 x_{t+1} &= x_t - \alpha \nabla f(x_t) + \beta (x_t - x_{t-1}) \\

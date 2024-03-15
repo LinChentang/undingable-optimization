@@ -12,6 +12,7 @@
 &emsp;&emsp; 为此，我们是否可以设计一种算法会在根据梯度或者当前周期数就更新学习率呢？AdaGrad（Adaptive Subgradient Methods）正是出于这样思路进行设计的。
 
 &emsp;&emsp;假设模型参数为$\theta$，$\theta^t$ 表示为第 $t$ 个周期的模型参数，同时损失函数为 $f(\theta^t)$。AdaGrad的迭代格式如下：
+
 $$
 \begin{array}{lll}
 \displaystyle \eta^t = \frac{\eta}{\sqrt{t+1}} \\
@@ -26,6 +27,7 @@ $$
 ## 6.2 收敛性
 &emsp;&emsp; 在机器学习算法应用中，特别是商业落地项目，样本量往往都是上百万甚至上亿，这些数据是无法被一次性放入机器中去的，或者，有一些模型是线上部署的，服务器会实时地搜集用户数据并输入到模型中，这些数据由于时空限制都是无法一次性放入内存中，所以只能分批次去加载这些数据，根据每批次的数据进行优化模型，这就是在线学习。  
 &emsp;&emsp;假设 $f_t(\theta)$ 是第 $t$ 个批次的损失函数，一共有 $T$ 个批次的数据，则
+
 $$
 \displaystyle f(\theta) = \sum_{t=1}^T f_t(\theta)
 $$
@@ -33,6 +35,7 @@ $$
 &emsp;&emsp; 对于这种在线算法，我们从`regret`的角度去证明其收敛性。
 ### 6.2.1 基本假设和参数设置
 &emsp;&emsp; 对于在线学习，我们追求一个`low regret`，定义如下： 
+
 $$
 R(T) = \sum_{t=1}^T f_t(\theta^t)-\min_{\theta}\sum_{t=1}^T f_t(\theta)
 $$
@@ -46,6 +49,7 @@ $$
 **假设一**
 
 &emsp;&emsp; 假设 $\theta\in \mathbb{R}^d$ 是模型参数，并且可行域有界，即对于向量 $\theta$ 中分量 $\forall \theta_i,\hat{\theta_i}$，存在一个常数 $D_i>0$，使得下式成立
+
 $$
 || \theta_i - \hat{\theta_i}|| \leqslant D_i
 $$
@@ -60,6 +64,7 @@ $$
 
 ### 6.2.2 证明过程
 &emsp;&emsp;假设 $\displaystyle \theta^* = arg \min_{\theta} \sum_{t=1}^T f_t(\theta)$，
+
 $$
 \begin{aligned}
 R(T) 
@@ -70,6 +75,7 @@ R(T)
 $$
 
 &emsp;&emsp;由于$f_t(\theta)$ 是`convex`函数，所以
+
 $$
 f_t(\theta^*) \geqslant f_t(\theta^t) + <g^t,\theta^*- \theta^t>
 $$
@@ -77,16 +83,19 @@ $$
 &emsp;&emsp;上式是`convex`函数的`First-order condition`，详细定义和证明可参考文献[3]的3.1.3小节。
 
 &emsp;&emsp;然后，我们可以得到
+
 $$
 <g^t,  \theta^t - \theta^*> \geqslant  f_t(\theta^t) - f_t(\theta^*)
 $$
 
 &emsp;&emsp;代入到 $R(T)$，得
+
 $$
 R(T) \leqslant \sum_{t=1}^T <g^t,\theta^t -\theta^*>
 $$
 
 &emsp;&emsp;同时
+
 $$
 \begin{aligned}
 \sum_{t=1}^T <g^t,\theta^t -\theta^*> 
@@ -96,6 +105,7 @@ $$
 $$
 
 &emsp;&emsp;最后我们可以得到
+
 $$
 R(T) \leqslant \sum_{i=1}^d\sum_{t=1}^T g^t_i(\theta^t_i -\theta^*_i)
 $$
@@ -103,35 +113,43 @@ $$
 &emsp;&emsp;同时，已知 $\theta^{t+1} = \theta^t - \alpha^t_i g^t_i$， 其中$\displaystyle \alpha^t_i = \frac{\eta}{\displaystyle \sum_{j=0}^t (g^j_i)^2}$.
 
 &emsp;&emsp;因此可以得到
+
 $$
 g^t_i(\theta^t_i -\theta^*_i) =\frac{1}{2\alpha^t_i}[(\theta^t_i -\theta^*_i)^2-(\theta^{t+1}_i -\theta^*_i)^2] +\frac{\alpha^t_i}{2}(g^t_i)^2
 $$
 
 &emsp;&emsp;同时
+
 $$
 \sum_{t=1}^T\frac{1}{2\alpha^t_i} \left[ (\theta^t_i -\theta^*_i)^2-(\theta^{t+1}_i -\theta^*_i)^2 \right] +\frac{\alpha^t_i}{2}(g^t_i)^2 \leqslant D^2_i \frac{1}{2\alpha^T_i}
 $$
 
 &emsp;&emsp;那么
+
 $$
 R(T)\leqslant \sum_{i=1}^{d} \left[ D_i^2 \frac{1}{2\alpha_i^T} + \sum_{t=1}^T \frac{\alpha^t_i}{2}(g^t_i)^2 \right]
 $$
 
 &emsp;&emsp;代入$\alpha^t_i$的定义，最后可以得到
+
 $$
 R(T) \leqslant  \sum_{i=1}^{d} \left[ D_i^2 \frac{1}{2\alpha} \sqrt{\sum_{j=0}^t (g^j_i)^2}+\frac{\alpha}{2} \sum_{t=1}^T \frac{(g^t_i)^2}{\displaystyle \sum_{j=0}^t (g^j_i)^2} \right]
 $$
 
 &emsp;&emsp;又根据假设二，可以得到
+
 $$
 \displaystyle \sqrt{\sum_{j=0}^t (g^j_i)^2} \leqslant G_i \sqrt{T+1}
 $$
 
 &emsp;&emsp;所以
+
 $$
 \sum_{t=1}^T \frac{(g^t_i)^2}{\displaystyle \sum_{j=0}^t (g^j_i)^2} \leqslant 2G_i \sqrt{T+1}
 $$
+
 &emsp;&emsp;最后，证明得到 
+
 $$
 R(T) \leqslant \sum_{i=1}^d [\frac{D_i^2}{2\alpha}+\alpha]G_i\sqrt{T}
 $$
