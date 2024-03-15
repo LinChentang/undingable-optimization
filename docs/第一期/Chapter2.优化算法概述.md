@@ -37,14 +37,19 @@ $$
 &emsp;&emsp;我们下面来陈述一个引理，它刻画了梯度下降算法下函数值的下降。先假设函数 $f(w)$ 的二阶梯度是有界的，即 $\nabla^2 f(w) \in [-L, L], \forall w$ ，称满足这个条件的函数为 L-光滑函数。
 
 > Definition (L -smoothness). A function $f: R^n \rightarrow R$ called L- smooth if for all $x, y \in R^n$，the following inequality holds:
+
 > $$
 > \|\nabla f(x) - \nabla f(y)\| \leqslant L \|x - y \|.
 > $$
+
 > If the function $f$ is L-smooth, then for all $x, y \in R^n$
+
 > $$
 > f(y) \leqslant f(x) + \langle \nabla f(x), y - x \rangle + \frac{L}{2} \| y - x\|^2.
 > $$
+
 > Next, if $f$ is additionally convex and $x^*$ is its minimizer, then for all $x \in R^d$
+
 > $$
 > \| \nabla f(x)\|^2 \leqslant 2L (f(x) - f(x^*))
 > $$
@@ -60,6 +65,7 @@ $$
 &emsp;&emsp;下面将说明在下降梯度和足够小的学习率下，函数值总是减小，除非迭代处的梯度为零。
 
 > Lemma (Descent Lemma). Suppose $f$ is L-smooth. Then, if $\eta < 1/(2L)$, we have 
+
 > $$
 > f(w_{t+1}) \leqslant f(w_t) - \frac{\eta}{2} \cdot \| \nabla f(w_t)\|^2_2
 > $$
@@ -165,7 +171,13 @@ $$
 v_t \leftarrow \gamma v_{t-1} + (1 - \gamma) \left( \frac{\eta_t}{1 - \gamma} g_t \right)
 $$
 
-&emsp;&emsp;由指数加权移动平均的形式可得，速度变量 $v_t$  实际上对序列 $\displaystyle \left\{ \frac{\eta_{t-i} g_{t-i}}{(1 - \gamma)}: i = 0, \cdots, \frac{1}{1-\gamma} -1 \right\}$ 做了指数加权移动平均。换句话说，相比于小批量随机梯度下降，动量法在每个时间步的自变量更新量近似于将前者对应的最近 $1 / (1 - \gamma)$ 个时间步的更新量做了指数加权移动平均后再除以 $1 - \gamma$ 。所以在动量法中，自变量在各个方向上的移动幅度不仅取决于当前梯度，还取决于过去的各个梯度在各个方向上是否一致。
+&emsp;&emsp;由指数加权移动平均的形式可得，速度变量 $v_t$  实际上对序列
+
+$$
+\displaystyle \left\{ \frac{\eta_{t-i} g_{t-i}}{(1 - \gamma)}: i = 0, \cdots, \frac{1}{1-\gamma} -1 \right\}
+$$ 
+
+做了指数加权移动平均。换句话说，相比于小批量随机梯度下降，动量法在每个时间步的自变量更新量近似于将前者对应的最近 $1 / (1 - \gamma)$ 个时间步的更新量做了指数加权移动平均后再除以 $1 - \gamma$ 。所以在动量法中，自变量在各个方向上的移动幅度不仅取决于当前梯度，还取决于过去的各个梯度在各个方向上是否一致。
 
 ## 2.4 本地运行时间分析
 
@@ -201,10 +213,14 @@ $$
 
 &emsp;&emsp;在 $A$ 不是对角阵这样的一般的情况下，并且不知道坐标系，算法对应的梯度下降更新为
 
-$w \leftarrow w - A^{-1} \nabla f(w)$
+$$
+w \leftarrow w - A^{-1} \nabla f(w)
+$$
 
 &emsp;&emsp;在更一般的情况下，$f$ 不是二次函数，这与牛顿算法相对应，梯度下降更新为
 
-$w \leftarrow w - \nabla^2 f(w)^{-1} \nabla f(w)$  
+$$
+w \leftarrow w - \nabla^2 f(w)^{-1} \nabla f(w)
+$$ 
 
 &emsp;&emsp;由于计算`Hessian`矩阵可能是非常困难的，因为它 `scale quadratically in d`（在实践中可能超过100万）。因此，使用`hessian`函数及其逆函数的近似值。
